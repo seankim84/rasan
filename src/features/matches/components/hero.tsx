@@ -12,13 +12,20 @@ export function Hero({ messages }: { messages: Messages }) {
           <Sparkles aria-hidden="true" size={14} />
           {messages.matches.heroBadge}
         </div>
-        <h1 className="max-w-xl text-[30px] font-black leading-[1.16] tracking-[-0.045em] text-white sm:text-5xl lg:text-[54px]">
+        <h1
+          className="max-w-xl text-[30px] font-black leading-[1.16] tracking-[-0.045em] text-white sm:text-5xl lg:text-[54px]"
+          style={{ fontFamily: "system-ui, sans-serif" }}
+        >
           {messages.matches.heroTitle}
         </h1>
         <p className="mt-3 max-w-lg text-sm leading-6 text-white/72 sm:mt-5 sm:text-base">
           {messages.matches.heroDescription}
         </p>
-        <a className="mt-6 hidden min-h-11 items-center gap-2 rounded-xl bg-[#FF5A36] px-4 text-sm font-extrabold text-[#101817] sm:inline-flex" href="#matches">
+        <a
+          className="mt-6 hidden min-h-11 items-center gap-2 rounded-xl bg-[#FF5A36] px-4 text-sm font-extrabold sm:inline-flex"
+          href="#matches"
+          style={{ color: "#101817" }}
+        >
           {messages.common.explore}
           <ArrowDown aria-hidden="true" size={17} />
         </a>

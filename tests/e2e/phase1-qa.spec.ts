@@ -180,7 +180,7 @@ test.describe("date and filter behavior", () => {
 test.describe("match cards and states", () => {
   test("card exposes all scannable facts and localized link", async ({ page }) => {
     await page.goto("/vi");
-    const card = page.getByRole("link", { name: /Xem trận tại Sân bóng Thảo Điền/ });
+    const card = page.getByRole("link", { name: /Sân bóng Thảo Điền/ });
     await expect(card).toContainText("19:00");
     await expect(card).toContainText("90 phút");
     await expect(card).toContainText("Quận 2");
@@ -207,7 +207,8 @@ test.describe("match cards and states", () => {
     await dates.nth(7).click();
     await expect(page).toHaveURL(/date=/);
     const closedCard = page.getByRole("link", { name: /Phú Nhuận/ });
-    await expect(closedCard).not.toContainText(/Còn \d+ chỗ/, { timeout: 10_000 });
+    await expect(closedCard).toContainText("Đã đóng", { timeout: 10_000 });
+    await expect(closedCard).not.toContainText(/Còn \d+ chỗ/);
   });
 
   test("match detail target is a documented Phase 1 404", async ({ page }) => {

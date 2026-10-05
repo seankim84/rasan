@@ -12,6 +12,7 @@ const facilityLabels: Record<Locale, Record<string, string>> = {
 };
 
 function availabilityLabel(match: Match, messages: Messages): string {
+  if (match.status === "closed" || match.status === "cancelled") return messages.matches.closed;
   if (match.status === "full" || match.spotsLeft === 0) return messages.matches.full;
   if (match.spotsLeft <= 2) return messages.matches.almostFull;
   return interpolate(messages.matches.spotsLeft, { count: match.spotsLeft });
@@ -22,7 +23,7 @@ export function MatchCard({ match, locale, messages }: { match: Match; locale: L
   return (
     <Link
       href={`/${locale}/matches/${match.id}`}
-      aria-label={interpolate(messages.matches.viewMatch, { venue: match.venueName })}
+      prefetch={false}
       className="group grid grid-cols-[92px_1fr] gap-4 rounded-2xl border border-[#DEE3DF] bg-white p-3 transition hover:-translate-y-0.5 hover:border-[#FFB39F] hover:shadow-[0_12px_34px_rgba(16,24,23,0.07)] sm:grid-cols-[128px_1fr_auto] sm:items-center sm:p-4"
     >
       <div className="court-grid relative h-[112px] overflow-hidden rounded-xl bg-[#18211F] sm:h-[126px]" aria-hidden="true">
@@ -35,7 +36,7 @@ export function MatchCard({ match, locale, messages }: { match: Match; locale: L
       </div>
 
       <div className="min-w-0 py-1">
-        <div className={`mb-1.5 inline-flex items-center gap-1.5 text-xs font-extrabold ${unavailable ? "text-[#606964]" : match.spotsLeft <= 2 ? "text-[#D94242]" : "text-[#168A55]"}`}>
+        <div className={`mb-1.5 inline-flex items-center gap-1.5 text-xs font-extrabold ${unavailable ? "text-[#606964]" : match.spotsLeft <= 2 ? "text-[#C83737]" : "text-[#0F7A4B]"}`}>
           <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
           {availabilityLabel(match, messages)}
           {match.onsitePayment ? <span className="hidden text-[#606964] sm:inline">· {messages.matches.onsite}</span> : null}

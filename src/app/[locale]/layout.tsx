@@ -1,11 +1,8 @@
-import "@fontsource/be-vietnam-pro/400.css";
-import "@fontsource/be-vietnam-pro/600.css";
-import "@fontsource/be-vietnam-pro/700.css";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
-import { AppProviders } from "@/app/providers";
 import { isLocale, locales } from "@/lib/i18n/config";
+import "@/styles/fonts.css";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -32,10 +29,8 @@ export default async function LocaleLayout({
   if (!isLocale(locale)) notFound();
 
   return (
-    <html lang={locale}>
-      <body>
-        <AppProviders>{children}</AppProviders>
-      </body>
+    <html lang={locale} data-scroll-behavior="smooth">
+      <body>{children}</body>
     </html>
   );
 }

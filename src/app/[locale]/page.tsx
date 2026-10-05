@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
+import { SiteHeader } from "@/components/layout/site-header";
+import { Hero } from "@/features/matches/components/hero";
 import { HomeExperience } from "@/features/matches/components/home-experience";
 import { MockMatchRepository } from "@/features/matches/data/mock-match-repository";
 import { addDays, getVietnamDateKey } from "@/lib/datetime/vietnam";
@@ -42,12 +45,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const matches = await repository.listUpcoming(startDate, 14);
 
   return (
-    <Suspense fallback={<HomeSkeleton />}>
-      <HomeExperience locale={locale} messages={getMessages(locale)} dates={dates} matches={matches} />
-    </Suspense>
+    <>
+      <SiteHeader locale={locale} messages={getMessages(locale)} />
+      <main className="mx-auto max-w-[1180px] px-4 pb-28 pt-4 sm:px-6 sm:pt-6 lg:px-8 lg:pt-8">
+        <Hero messages={getMessages(locale)} />
+        <Suspense fallback={<HomeSkeleton />}>
+          <HomeExperience locale={locale} messages={getMessages(locale)} dates={dates} matches={matches} />
+        </Suspense>
+      </main>
+      <MobileBottomNav locale={locale} messages={getMessages(locale)} />
+    </>
   );
 }
 
 function HomeSkeleton() {
-  return <div className="mx-auto min-h-screen max-w-[1180px] animate-pulse bg-[#F5F6F2] px-4 py-6" aria-label="Loading" />;
+  return <div className="min-h-96 animate-pulse py-8" aria-label="Loading" />;
 }

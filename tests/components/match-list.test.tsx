@@ -36,4 +36,17 @@ describe("MatchList", () => {
     fireEvent.click(screen.getByRole("button", { name: "필터 초기화" }));
     expect(onReset).toHaveBeenCalledOnce();
   });
+
+  it("labels a closed match as closed instead of available", () => {
+    render(
+      <MatchList
+        matches={[{ ...match, status: "closed", spotsLeft: 4 }]}
+        locale="vi"
+        messages={getMessages("vi")}
+        onReset={vi.fn()}
+      />,
+    );
+    expect(screen.getByText("Đã đóng")).toBeInTheDocument();
+    expect(screen.queryByText("Còn 4 chỗ")).not.toBeInTheDocument();
+  });
 });

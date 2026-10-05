@@ -2,7 +2,7 @@
 
 ## 판정
 
-**조건부 실패(출시 보류)**. 설치, 빌드, 기본 탐색, 다국어, 단일 필터, 반응형 레이아웃, SEO 기본 항목과 쿼리 입력 보안은 정상이다. 그러나 빠른 복합 필터 조작 시 상태 유실, 마감 경기의 잔여석 오표시, WCAG AA 대비 및 접근 가능한 이름 문제, 브라우저 콘솔 404, 모바일 LCP 목표 초과가 남아 있다.
+**수정 후 자동화 품질 기준 PASS**. 최초 사이클에서 발견한 QA-001~QA-008을 모두 수정했고, 확장 E2E 80/80, 빠른 복합 필터 반복 20/20, Vitest 26/26 및 프로덕션 빌드를 통과했다. 실기기·사람·실제 배포 환경이 필요한 `BLOCKED` 항목은 출시 전 별도 승인이 필요하다.
 
 - 대상 제품 커밋: `a4ebaa60e86a17ddbaa088145e8c1690415e1e84`
 - 실행일: 2026-10-03 UTC
@@ -12,7 +12,40 @@
 - 계획: `docs/qa/phase-1-test-plan.md`
 - 테스트 데이터: 결정적 mock repository, 외부 DB·인증·결제 연결 없음
 
-## 전체 268개 정식 항목 결과
+## 수정 후 재검증 — 2026-10-05
+
+| 검사 | 최종 결과 | 증거 |
+| --- | --- | --- |
+| ESLint | PASS | 오류·경고 0 |
+| TypeScript / production build | PASS | 타입 검사 및 `/vi`, `/ko`, `/en`, icon, Open Graph image, robots, sitemap 생성 |
+| Vitest | PASS | 7 files, 26 tests |
+| 확장 Playwright | PASS | mobile/desktop 전체 80/80 |
+| 빠른 복합 필터 반복 | PASS | mobile 10/10, desktop 10/10, 합계 20/20 |
+| axe serious/critical | PASS | vi/ko/en × mobile/desktop 위반 0 |
+| 브라우저 콘솔 및 자산 요청 | PASS | 정상 사용자 흐름 오류 0, icon 응답 200, 미구현 상세 prefetch 제거 |
+| 보안 헤더 | PASS | CSP, Referrer-Policy, nosniff, DENY, Permissions-Policy, HSTS 확인 |
+
+| 결함 | 조치 결과 |
+| --- | --- |
+| QA-001 | URL parameter 업데이트를 동기화해 빠른 복합 필터 상태 유실 해소 |
+| QA-002 | 마감 경기에 언어별 마감 문구 표시 |
+| QA-003 | CTA·danger·success 색 대비를 WCAG AA 수준으로 수정 |
+| QA-004 | 카드의 잘못된 `aria-label`을 제거해 보이는 텍스트와 접근 가능한 이름 일치 |
+| QA-005 | icon 추가 및 미구현 상세 링크 prefetch 비활성화로 정상 흐름 404 제거 |
+| QA-006 | 초기 client boundary와 폰트 로딩을 축소해 mobile LCP 중앙값 2.118초 달성 |
+| QA-007 | 프로덕션 기본 보안 헤더 추가 및 응답 검증 |
+| QA-008 | app icon과 언어 경로별 Open Graph 이미지 추가 |
+
+### 수정 후 Lighthouse 3회 중앙값
+
+| 프로필 | Performance | Accessibility | Best Practices | SEO | FCP | LCP | CLS | TBT |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Mobile | 96 | 100 | 100 | 100 | 1.523s | **2.118s PASS** | 0.00011 | 164ms |
+| Desktop | 100 | 100 | 100 | 100 | 0.429s | 0.633s | 0.00057 | 3ms |
+
+이하 결과는 결함 발견 당시의 최초 QA 사이클 기록이며, 수정 전 상태를 추적할 수 있도록 유지한다.
+
+## 최초 사이클 전체 268개 정식 항목 결과
 
 `PASS`는 자동화, 코드 검토 또는 캡처를 통한 직접 관찰 근거가 있는 항목이다. 사람·실기기가 필요한 검사는 실행하지 않고 `BLOCKED`로 남겼다.
 
@@ -60,7 +93,7 @@
 | NOT IMPLEMENTED | `MATCH-015`, `NAV-007` |
 | N/A | `ENV-014`(해당 URL을 사용하는 기능 없음), `ROUTE-013`·`FILTER-013`(필터 라우팅이 의도적으로 `replace` 사용), `PERF-005`(합의된 번들 예산 없음), `QC-019`(QA 파일이 의도적으로 미커밋 상태), `REL-010`(결함 수정 전) |
 
-## 자동화 및 빌드 결과
+## 최초 사이클 자동화 및 빌드 결과
 
 | 검사 | 결과 | 증거 |
 | --- | --- | --- |
@@ -79,7 +112,7 @@
 
 확장 E2E의 10개 제품 실패는 독립 결함 4종이 모바일·데스크톱 또는 세 언어에서 중복 검출된 결과다. axe 6건은 같은 대비 결함을 vi/ko/en × mobile/desktop에서 재현한 것이다.
 
-## 결함 목록
+## 최초 사이클 결함 목록
 
 | ID | 심각도 | 현상 | 재현/영향 | 권장 수정 |
 | --- | --- | --- | --- | --- |
@@ -92,7 +125,7 @@
 | QA-007 | Medium | 프로덕션 응답에 기본 보안 헤더가 없다. | CSP/frame-ancestors, nosniff, Referrer-Policy, Permissions-Policy 미검출. `X-Powered-By`는 정상 비활성화. | Next 설정 또는 배포 프록시에서 정책을 정의하고 배포 환경에서 재검증한다. |
 | QA-008 | Low | favicon/app icon과 공유 이미지가 없다. | favicon 404, SEO 출시 체크 미충족. | Next metadata icon 및 Open Graph 이미지를 추가한다. |
 
-## Lighthouse 3회 결과
+## 최초 사이클 Lighthouse 3회 결과
 
 | 프로필 | Performance | Accessibility | Best Practices | SEO | FCP | LCP | CLS | TBT |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -126,4 +159,3 @@
 Supabase DB, 인증, 예약, 결제, 관리자 페이지, 배포 모니터링은 구현되지 않아 기능 합격으로 보지 않았다. 계획의 추가 자동화 12개 중 필터·언어·라우팅·날짜·카드 상태·axe 검사는 추가했다. controlled error/loading, Safari/WebKit, 9개 조합 visual baseline, Lighthouse CI budget, CI secret/license 검사, clean-clone CI job은 후속 작업이다.
 
 실제 Safari/iPhone/iPad, Firefox, Android 실기기, VoiceOver, TalkBack, 네이티브 번역 검수, 5인 사용성 검사, 제품 책임자 UAT와 배포 후 검사는 이 환경에서 수행할 수 없다. 이 항목은 출시 전에 별도 증거와 승인이 필요하다.
-
